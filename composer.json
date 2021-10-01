@@ -1,0 +1,25 @@
+{
+    "name": "mamadou-aly-sy/router",
+    "description": "A simple php router",
+    "type": "library",
+    "license": "MIT",
+    "scripts": {
+        "test": "./vendor/bin/pest",
+        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage"
+    },
+    "autoload": {
+        "psr-4": {
+            "MamadouAlySy\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mamadou Aly Sy",
+            "email": "sy.aly.mamadou@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require-dev": {
+        "pestphp/pest": "1.x-dev"
+    }
+}
