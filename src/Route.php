@@ -6,38 +6,22 @@ use Closure;
 
 class Route
 {
-    protected string $method;
+    protected ?string $name;
     protected string $path;
     protected Closure | array | string $action;
     protected array $parameters;
 
     /**
-     * @param string $method
      * @param string $path
      * @param array|Closure|string $action
+     * @param string|null $name
      */
-    public function __construct(string $method, string $path, Closure|array|string $action)
+    public function __construct(string $path, Closure|array|string $action, ?string $name = null)
     {
-        $this->method = $method;
         $this->path = $path;
         $this->action = $action;
+        $this->name = $name;
         $this->parameters = [];
-    }
-
-    /**
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return strtolower($this->method);
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod(string $method): void
-    {
-        $this->method = $method;
     }
 
     /**
@@ -71,6 +55,24 @@ class Route
     {
         $this->action = $action;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name
+     */
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+
 
     /**
      * @return array
