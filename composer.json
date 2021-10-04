@@ -3,6 +3,11 @@
     "description": "A simple php router",
     "type": "library",
     "license": "MIT",
+    "support": {
+        "source": "https://github.com/MamadouAlySy/Router",
+        "issues": "https://github.com/MamadouAlySy/Router/issues",
+        "wiki": "https://github.com/MamadouAlySy/Router/wiki"
+    },
     "scripts": {
         "test": "./vendor/bin/pest",
         "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage"
