@@ -6,42 +6,26 @@ use Closure;
 
 class Route
 {
-    protected string $method;
+    protected ?string $name;
     protected string $path;
     protected Closure | array | string $action;
     protected array $parameters;
 
     /**
-     * @param string $method
      * @param string $path
      * @param array|Closure|string $action
+     * @param string|null $name
      */
-    public function __construct(string $method, string $path, Closure|array|string $action)
+    public function __construct(string $path, Closure|array|string $action, ?string $name = null)
     {
-        $this->method = $method;
         $this->path = $path;
         $this->action = $action;
+        $this->name = $name;
         $this->parameters = [];
     }
 
     /**
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return strtolower($this->method);
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod(string $method): void
-    {
-        $this->method = $method;
-    }
-
-    /**
-     * @return string
+     * @return string the route path
      */
     public function getPath(): string
     {
@@ -49,7 +33,7 @@ class Route
     }
 
     /**
-     * @param string $path
+     * @param string $path the route path
      */
     public function setPath(string $path): void
     {
@@ -57,7 +41,7 @@ class Route
     }
 
     /**
-     * @return array|Closure|string
+     * @return array|Closure|string the route action
      */
     public function getAction(): Closure|array|string
     {
@@ -65,7 +49,7 @@ class Route
     }
 
     /**
-     * @param array|Closure|string $action
+     * @param array|Closure|string $action the route action
      */
     public function setAction(Closure|array|string $action): void
     {
@@ -73,7 +57,25 @@ class Route
     }
 
     /**
-     * @return array
+     * @return string|null the route name
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string|null $name the route name
+     */
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+
+
+    /**
+     * @return array the route parameters
      */
     public function getParameters(): array
     {
@@ -81,7 +83,7 @@ class Route
     }
 
     /**
-     * @param array $parameters
+     * @param array $parameters the route parameters
      */
     public function setParameters(array $parameters): void
     {

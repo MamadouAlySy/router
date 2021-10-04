@@ -2,57 +2,69 @@
 
 namespace MamadouAlySy;
 
+use Closure;
+
 class Router
 {
-    protected array $routes = [];
-    protected array $regexPattern = [
-        '#{int:(\w+)}#' => '([0-9]+)',
-        '#{string:(\w+)}#' => '([a-zA-Z]+)',
-        '#{\*:(\w+)}#' => '(.+)',
-    ];
+    protected RouteCollection $routeCollection;
 
-    public function add(Route $route): void
+    /**
+     * @param RouteCollection|null $routeCollection
+     */
+    public function __construct(?RouteCollection $routeCollection = null)
     {
-        $this->routes[$route->getMethod()][] = $route;
+        $this->routeCollection = $routeCollection ?? new RouteCollection();
     }
 
-    public function getRoutes(string $method = 'get'): array
+    /**
+     * Register a route as get method
+     */
+    public function get(string $path, Closure|array|string $action, ?string $name = null): void
     {
-        return $this->routes[strtolower($method)] ?? [];
+        $this->routeCollection->add(['get'], new Route($path, $action, $name));
     }
 
-    public function findRouteThatMatches(string $method, string $url): ?Route
+    /**
+     * Register a route as post method
+     */
+    public function post(string $path, Closure|array|string $action, ?string $name = null): void
     {
-        $routes = $this->getRoutes($method);
-
-        foreach ($routes as $route) {
-
-            $regexPath = $this->getRegexPath($route->getPath());
-
-            if (preg_match($regexPath, $url, $matches)) {
-
-                $params = [];
-                unset($matches[0]);
-
-                foreach ($matches as $key => $values) {
-                    $params[] = trim($values, '/');
-                }
-
-                $route->setParameters($params);
-
-                return $route;
-            }
-
-        }
-        return null;
+        $this->routeCollection->add(['post'], new Route($path, $action, $name));
     }
 
-    protected function getRegexPath(string $path): string
+    /**
+     * Register a route as put method
+     */
+    public function put(string $path, Closure|array|string $action, ?string $name = null): void
     {
-        foreach ($this->regexPattern as $key => $regex) {
-            $path = preg_replace($key, $regex, $path);
-        }
+        $this->routeCollection->add(['put'], new Route($path, $action, $name));
+    }
 
-        return '#^'.$path.'$#';
+    /**
+     * Register a route as delete method
+     */
+    public function delete(string $path, Closure|array|string $action, ?string $name = null): void
+    {
+        $this->routeCollection->add(['delete'], new Route($path, $action, $name));
+    }
+
+    /**
+     * Register a route for all method
+     */
+    public function any(string $path, Closure|array|string $action, ?string $name = null): void
+    {
+        $this->routeCollection->add(['get', 'post', 'put', 'delete'], new Route($path, $action, $name));
+    }
+
+    /**
+     * Match all routes and find a route that matches the given method and url
+     *
+     * @param string $method
+     * @param string $url
+     * @return Route|null
+     */
+    public function match(string $method, string $url): ?Route
+    {
+        return $this->routeCollection->findRouteThatMatches($method, $url);
     }
 }
