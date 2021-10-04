@@ -11,7 +11,7 @@ A simple php router
 
 require_once './vendor/autoload.php';
 
-$router = new Router(); 
+$router = new \MamadouAlySy\Router(); 
 
 // or
 
