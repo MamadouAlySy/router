@@ -67,4 +67,16 @@ class Router
     {
         return $this->routeCollection->findRouteThatMatches($method, $url);
     }
+
+    /**
+     * Generate url for a route with the given name
+     *
+     * @param string $name the name of the route
+     * @param array $parameters
+     * @return string|null
+     */
+    public function generate(string $name, array $parameters = []): ?string
+    {
+        return $this->routeCollection->generateUrlForRouteNamed($name, $parameters);
+    }
 }

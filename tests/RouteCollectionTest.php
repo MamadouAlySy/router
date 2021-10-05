@@ -45,9 +45,27 @@ it('can find route that match a complex url', function () {
 });
 
 it('will return null if there is not route that match a simple url', function () {
-    $this->routeCollection->add(['get'], new Route( '/user/{?int:id}', function () {}));
+    $this->routeCollection->add(['get'], new Route( '/user/{int:id}', function () {}));
 
     $route = $this->routeCollection->findRouteThatMatches('GET', '/user/a');
 
     expect($route)->toBeNull();
+});
+
+
+
+it('can find a route by name', function () {
+    $this->routeCollection->add(['get'], new Route( '/user/{int:id}', function () {}, 'user'));
+
+    $route = $this->routeCollection->findRouteWithName('user');
+
+    expect($route)->toBeInstanceOf(Route::class);
+});
+
+it('can generate a route url', function () {
+    $this->routeCollection->add(['get'], new Route( '/user/{string:action}/{int:id}', function () {}, 'user'));
+
+    $url = $this->routeCollection->generateUrlForRouteNamed('user', ['id' => 5, 'action' => 'edit']);
+
+    expect($url)->toBe('/user/edit/5');
 });

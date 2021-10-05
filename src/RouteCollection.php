@@ -6,6 +6,8 @@ class RouteCollection
 {
     private array $collection = [];
 
+    private array $supportedMethod = ['get', 'post', 'put', 'delete'];
+
     protected array $regexPattern = [
         '#{int:(\w+)}#' => '([0-9]+)',
         '#{string:(\w+)}#' => '([a-zA-Z]+)',
@@ -83,5 +85,35 @@ class RouteCollection
         }
 
         return null;
+    }
+
+    public function findRouteWithName(string $name): ?Route
+    {
+        foreach ($this->supportedMethod as $method) {
+            foreach ($this->getRoutes($method) as $route) {
+                if ($route->getName() === $name) {
+                    return $route;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function generateUrlForRouteNamed(string $name, array $parameters = []): ?string
+    {
+        $route = $this->findRouteWithName($name);
+
+        if (!$route)
+            return null;
+
+        $path = $route->getPath();
+
+
+        foreach ($parameters as $key => $value) {
+            $path = preg_replace("#{([a-zA-Z]+):$key}#", $value, $path);
+        }
+
+        return $path;
     }
 }
