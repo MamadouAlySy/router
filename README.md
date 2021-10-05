@@ -45,7 +45,7 @@ $router->any('/', function () {/**/});
 
 ```php
 
-$router->get('/edit/{int:id}', function () {/**/}, 'app.edit'); or null if not match
+$router->get('/edit/{int:id}', function () {/**/}, 'app.edit');
 
 $router->generate('app.edit', [id => 2]) // => returns /edit/2
 
