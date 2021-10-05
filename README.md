@@ -55,7 +55,7 @@ $router->generate('app.edit', [id => 2]); // => returns /edit/2
 
 ```php
 
-$route = $router->match('GET', '/') // => returns a route if match or null if not match
+$route = $router->match('GET', '/'); // => returns a route if match or null if not match
 
 $route->getName(); // => returns the route name
 $route->getAction(); // => returns the route action
