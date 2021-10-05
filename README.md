@@ -41,6 +41,16 @@ $router->any('/', function () {/**/});
 
 ```
 
+### Generating route url
+
+```php
+
+$router->get('/edit/{int:id}', function () {/**/}, 'app.edit'); or null if not match
+
+$router->generate('app.edit', [id => 2]) // => returns /edit/2
+
+```
+
 ### Matching Routes
 
 ```php
