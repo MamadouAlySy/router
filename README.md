@@ -47,7 +47,7 @@ $router->any('/', function () {/**/});
 
 $router->get('/edit/{int:id}', function () {/**/}, 'app.edit');
 
-$router->generate('app.edit', [id => 2]) // => returns /edit/2
+$router->generate('app.edit', [id => 2]); // => returns /edit/2
 
 ```
 
@@ -57,9 +57,9 @@ $router->generate('app.edit', [id => 2]) // => returns /edit/2
 
 $route = $router->match('GET', '/') // => returns a route if match or null if not match
 
-$route->getName() // => returns the route name
-$route->getAction() // => returns the route action
-$route->getParameters() // => returns the route matched parameters
+$route->getName(); // => returns the route name
+$route->getAction(); // => returns the route action
+$route->getParameters(); // => returns the route matched parameters
 
 ```
 
