@@ -1,17 +1,19 @@
 # Router
+
 A simple php router
 
 # Requirements
-- PHP version: `>=8.0`
 
-### Initialisation
+-   PHP version: `>=8.0`
+
+### Initialization
 
 ```php
 <?php
 
 require_once './vendor/autoload.php';
 
-$router = new \MamadouAlySy\Router(); 
+$router = new \MamadouAlySy\Router();
 
 // or
 

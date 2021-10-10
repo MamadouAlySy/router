@@ -1,71 +1,44 @@
 <?php
 
+use MamadouAlySy\Exceptions\RouteNotFoundException;
 use MamadouAlySy\Route;
 use MamadouAlySy\RouteCollection;
+use PHPUnit\Framework\TestCase;
 
-beforeEach(function () {
-    $this->routeCollection = new RouteCollection();
-});
+class RouteCollectionTest extends TestCase
+{
+    protected RouteCollection $routeCollection;
 
-it('can add routes', function () {
-    $this->routeCollection->add(['get', 'post'], new Route('/', function () {}));
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->routeCollection = new RouteCollection();
+    }
+    
+    public function testCanAddNewRoute()
+    {
+        $this->routeCollection->add('get', new Route('/', function () {}));
 
-    expect($this->routeCollection->getRoutes('GET'))->toHaveCount(1);
+        $this->assertCount(
+            expectedCount: 1,
+            haystack: $this->routeCollection->getRoutes('get')
+        );
+    }
 
-    expect($this->routeCollection->getRoutes('POST'))->toHaveCount(1);
-});
+    public function testCanGetRouteByName()
+    {
+        $this->routeCollection->add('get', new Route('/', function () {}, 'test'));
+        $route = $this->routeCollection->get('test');
 
-it('can find route that match a simple url', function () {
-    $this->routeCollection->add(['get'], new Route('/', function () { return 'test success'; }));
+        $this->assertSame(
+            expected: $route->getName(),
+            actual: 'test'
+        );
+    }
 
-    $route = $this->routeCollection->findRouteThatMatches('GET', '/');
-
-    expect($route)->toBeInstanceOf(Route::class);
-
-    $content = call_user_func_array($route->getAction(), $route->getParameters());
-
-    expect($content)->toBe('test success');
-});
-
-it('can find route that match a complex url', function () {
-    $this->routeCollection->add(['get'], new Route('/user/{int:id}', function ($id) {
-            return 'user ' . $id;
-        })
-    );
-
-    $route = $this->routeCollection->findRouteThatMatches('GET', '/user/12');
-
-    expect($route)->toBeInstanceOf(Route::class);
-
-    $content = call_user_func_array($route->getAction(), $route->getParameters());
-
-    expect($content)->toBe('user 12');
-
-
-});
-
-it('will return null if there is not route that match a simple url', function () {
-    $this->routeCollection->add(['get'], new Route( '/user/{int:id}', function () {}));
-
-    $route = $this->routeCollection->findRouteThatMatches('GET', '/user/a');
-
-    expect($route)->toBeNull();
-});
-
-
-
-it('can find a route by name', function () {
-    $this->routeCollection->add(['get'], new Route( '/user/{int:id}', function () {}, 'user'));
-
-    $route = $this->routeCollection->findRouteWithName('user');
-
-    expect($route)->toBeInstanceOf(Route::class);
-});
-
-it('can generate a route url', function () {
-    $this->routeCollection->add(['get'], new Route( '/user/{string:action}/{int:id}', function () {}, 'user'));
-
-    $url = $this->routeCollection->generateUrlForRouteNamed('user', ['id' => 5, 'action' => 'edit']);
-
-    expect($url)->toBe('/user/edit/5');
-});
+    public function testWillThrowAnExceptionIfNoRouteFound()
+    {
+        $this->expectException(RouteNotFoundException::class);
+        $this->routeCollection->get('test');
+    }
+}
