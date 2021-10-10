@@ -9,8 +9,7 @@
         "wiki": "https://github.com/MamadouAlySy/Router/wiki"
     },
     "scripts": {
-        "test": "./vendor/bin/pest",
-        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage"
+        "test": "./vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {
@@ -23,8 +22,8 @@
             "email": "sy.aly.mamadou@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require-dev": {
-        "pestphp/pest": "1.x-dev"
+        "phpunit/phpunit": "^9.5"
     }
 }

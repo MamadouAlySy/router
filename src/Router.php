@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MamadouAlySy;
 
 use Closure;
@@ -8,75 +10,45 @@ class Router
 {
     protected RouteCollection $routeCollection;
 
-    /**
-     * @param RouteCollection|null $routeCollection
-     */
     public function __construct(?RouteCollection $routeCollection = null)
     {
         $this->routeCollection = $routeCollection ?? new RouteCollection();
     }
 
-    /**
-     * Register a route as get method
-     */
-    public function get(string $path, Closure|array|string $action, ?string $name = null): void
+    public function getRouteCollection()
     {
-        $this->routeCollection->add(['get'], new Route($path, $action, $name));
+        return new $this->routeCollection;
     }
 
-    /**
-     * Register a route as post method
-     */
-    public function post(string $path, Closure|array|string $action, ?string $name = null): void
+    protected function add(string $methods, string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['post'], new Route($path, $action, $name));
+        foreach (explode('|', $methods) as $$method) {
+            $this->routeCollection->add($method, new Route($path, $callable, $name));
+        }
     }
 
-    /**
-     * Register a route as put method
-     */
-    public function put(string $path, Closure|array|string $action, ?string $name = null): void
+    public function get(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['put'], new Route($path, $action, $name));
+        $this->add('get', $path, $callable, $name);
     }
 
-    /**
-     * Register a route as delete method
-     */
-    public function delete(string $path, Closure|array|string $action, ?string $name = null): void
+    public function post(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['delete'], new Route($path, $action, $name));
+        $this->add('post', $path, $callable, $name);
     }
 
-    /**
-     * Register a route for all method
-     */
-    public function any(string $path, Closure|array|string $action, ?string $name = null): void
+    public function put(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['get', 'post', 'put', 'delete'], new Route($path, $action, $name));
+        $this->add('put', $path, $callable, $name);
     }
 
-    /**
-     * Match all routes and find a route that matches the given method and url
-     *
-     * @param string $method
-     * @param string $url
-     * @return Route|null
-     */
-    public function match(string $method, string $url): ?Route
+    public function delete(string $path, Closure | array $callable, ?string $name = null): void
     {
-        return $this->routeCollection->findRouteThatMatches($method, $url);
+        $this->add('delete', $path, $callable, $name);
     }
 
-    /**
-     * Generate url for a route with the given name
-     *
-     * @param string $name the name of the route
-     * @param array $parameters
-     * @return string|null
-     */
-    public function generate(string $name, array $parameters = []): ?string
+    public function any(string $path, Closure | array $callable, ?string $name = null): void
     {
-        return $this->routeCollection->generateUrlForRouteNamed($name, $parameters);
+        $this->add('get|post|put|delete', $path, $callable, $name);
     }
 }
