@@ -38,7 +38,7 @@ class RouteCollectionTest extends TestCase
 
     public function testWillThrowAnExceptionIfNoRouteFound()
     {
-        $this->expectException(RouteNotFoundException::class);
+        $this->expectException(exception: RouteNotFoundException::class);
         $this->routeCollection->get('test');
     }
 }

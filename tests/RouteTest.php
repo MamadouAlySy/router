@@ -9,44 +9,53 @@ class RouteTest extends TestCase
     public function testCanMatchASimpleRoute()
     {
         $route = new Route('/home', function () {});
-        $this->assertTrue($route->match('/home'));
+        $this->assertTrue(condition: $route->match('/home'));
     }
 
     public function testCanMatchADynamicRoute()
     {
         $route = new Route('/post/:id-:slug', function () {});
-        $this->assertTrue($route->match('/post/5-long-board'));
+        $this->assertTrue(condition: $route->match('/post/5-long-board'));
     }
 
     public function testCanMatchADynamicRouteAndGetParametersByUsingWithMethod()
     {
         $route = (new Route('/post/:id-:slug', function () {}))->with('id', '[0-9]+');
         $route->match('/post/5-long-board');
-        $this->assertEquals(['5', 'long-board'], $route->getParameters());
+        $this->assertEquals(
+            expected: ['5', 'long-board'], 
+            actual: $route->getParameters()
+        );
     }
 
     public function testCanMatchADynamicRouteAndGetParameters2()
     {
         $route = new Route('/post/:slug-:id', function () {});
         $route->match('/post/long-board-5');
-        $this->assertEquals(['long-board', '5'], $route->getParameters());
+        $this->assertEquals(
+            expected: ['long-board', '5'],
+            actual: $route->getParameters()
+        );
     }
 
     public function testWillReturnFalseIfNotMatches()
     {
         $route = new Route('/', function () {});
-        $this->assertFalse($route->match('/post'));
+        $this->assertFalse(condition: $route->match('/post'));
     }
 
     public function testCanCallARoute()
     {
         $route = new Route('/', function () { return 'hello'; });
-        $this->assertSame($route->call(), 'hello');
+        $this->assertSame(
+            expected: $route->call(),
+            actual: 'hello'
+        );
     }
 
     public function testWillReturnAnExceptionIfControllerNotExistWhenCallingARoute()
     {
-        $this->expectException(RouteCallException::class);
+        $this->expectException(exception: RouteCallException::class);
         $route = new Route('/', ['App\Controller\HomeController', 'index']);
         $route->call();
     }
