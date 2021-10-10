@@ -22,7 +22,7 @@ class Router
 
     protected function add(string $methods, string $path, Closure | array $callable, ?string $name = null): void
     {
-        foreach (explode('|', $methods) as $$method) {
+        foreach (explode('|', $methods) as $method) {
             $this->routeCollection->add($method, new Route($path, $callable, $name));
         }
     }
@@ -50,5 +50,11 @@ class Router
     public function any(string $path, Closure | array $callable, ?string $name = null): void
     {
         $this->add('get|post|put|delete', $path, $callable, $name);
+    }
+
+    public function generateUri(string $name, array $parameters = [])
+    {
+        $route = $this->routeCollection->get($name);
+        return $route->generateUri($parameters);
     }
 }

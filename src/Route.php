@@ -23,6 +23,9 @@ class Route
         $this->parameters = [];
     }
 
+    /**
+     * @return string te route path
+     */
     public function getPath(): string
     {
         return $this->path;
@@ -87,6 +90,15 @@ class Route
             return '(' . $this->withParameters[$matches[1]] . ')';
         }
         return "([^/]+)";
+    }
+
+    public function generateUri(array $parameters = []): string
+    {
+        $path = $this->getPath();
+        foreach ($parameters as $key => $value) {
+            $path = str_replace(":$key", strval($value), $path);
+        }
+        return '/' . trim($path, '/');
     }
 
     public function call()

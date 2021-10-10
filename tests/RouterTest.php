@@ -24,4 +24,14 @@ class RouterTest extends TestCase
             actual: $this->router->getRouteCollection()
         );
     }
+
+    public function testCanGenerateRoutUri()
+    {
+        $this->router->get('/user/:id', [], 'user.show');
+
+        $this->assertEquals(
+            expected: '/user/5',
+            actual: $this->router->generateUri('user.show', ['id' => 5])
+        );
+    }
 }
