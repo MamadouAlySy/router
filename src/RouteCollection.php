@@ -16,6 +16,9 @@ class RouteCollection
         $this->routes = $routes;
     }
 
+    /**
+     * Adds new route to the collection
+     */
     public function add(string $method, Route $route): Route
     {
         $method = strtolower($method);
@@ -27,6 +30,13 @@ class RouteCollection
         return $route;
     }
 
+    /**
+     * Return all route for the given method.
+     * Note: if $method parameter is not specified it will return all routes for all methods
+     *
+     * @param string|null $method
+     * @return array
+     */
     public function getRoutes(?string $method = null): array
     {
         if ($method) {
@@ -35,6 +45,9 @@ class RouteCollection
         return $this->routes;
     }
 
+    /**
+     * Returns a route with the given name
+     */
     public function get(string $name): Route
     {
         if (isset($this->namedRoutes[$name])) {
