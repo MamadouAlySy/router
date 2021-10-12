@@ -1,31 +1,21 @@
 # Router
+
 A simple php router
 
-# Requirements
+## Requirements
+
 - PHP version: `>=8.0`
 
-### Initialisation
+### Initialization
 
 ```php
 <?php
 
 require_once './vendor/autoload.php';
 
-$router = new \MamadouAlySy\Router(); 
-
-// or
-
-$routeCollection = new \MamadouAlySy\RouteCollectionFactory(
-    [
-       'home' => [
-           'path' => '/',
-           'action' => 'HomeController::index',
-           'methods' => ['GET']
-       ]
-    ];
+$router = new \MamadouAlySy\Router(
+    new \MamadouAlySy\RouteCollection()
 );
-
-$router = new \MamadouAlySy\Router($routeCollection);
 
 ```
 
@@ -41,25 +31,15 @@ $router->any('/', function () {/**/});
 
 ```
 
-### Generating route url
-
-```php
-
-$router->get('/edit/{int:id}', function () {/**/}, 'app.edit'); or null if not match
-
-$router->generate('app.edit', [id => 2]) // => returns /edit/2
-
-```
-
 ### Matching Routes
 
 ```php
 
-$route = $router->match('GET', '/') // => returns a route if match or null if not match
+$route = $router->match('GET', '/'); // => returns a route if match or null if not match
 
-$route->getName() // => returns the route name
-$route->getAction() // => returns the route action
-$route->getParameters() // => returns the route matched parameters
+$route->getName(); // => returns the route name
+$route->getAction(); // => returns the route action
+$route->getParameters(); // => returns the route matched parameters
 
 ```
 
@@ -67,8 +47,17 @@ $route->getParameters() // => returns the route matched parameters
 
 ```php
 
-'{int:id}'         => 'id => ([0-9]+)'
-'{string:name}'    => 'name => ([a-zA-Z]+)'
-'{*:name}'         => 'name => (.+)'
+$router->get('/user/:id', function () {/**/})->with('id', '[0-9]+');
+$router->get('/:action/:name', function () {/**/});
+
+```
+
+### Generating route url
+
+```php
+
+$router->get('/edit/:id', function () {/**/}, 'app.edit');
+
+$router->generateUri('app.edit', [id => 2]); // => returns /edit/2
 
 ```

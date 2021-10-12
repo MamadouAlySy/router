@@ -1,82 +1,113 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MamadouAlySy;
 
 use Closure;
+use MamadouAlySy\Exceptions\RouteNotFoundException;
 
 class Router
 {
     protected RouteCollection $routeCollection;
 
-    /**
-     * @param RouteCollection|null $routeCollection
-     */
     public function __construct(?RouteCollection $routeCollection = null)
     {
         $this->routeCollection = $routeCollection ?? new RouteCollection();
     }
 
     /**
-     * Register a route as get method
+     * @return RouteCollection the router routes collection
      */
-    public function get(string $path, Closure|array|string $action, ?string $name = null): void
+    public function getRouteCollection(): RouteCollection
     {
-        $this->routeCollection->add(['get'], new Route($path, $action, $name));
+        return $this->routeCollection;
     }
 
     /**
-     * Register a route as post method
+     * Adds new route to the routes collection
+     *
+     * @param string $methods
+     * @param string $path
+     * @param Closure|array $callable
+     * @param string|null $name
      */
-    public function post(string $path, Closure|array|string $action, ?string $name = null): void
+    protected function add(string $methods, string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['post'], new Route($path, $action, $name));
+        foreach (explode('|', $methods) as $method) {
+            $this->routeCollection->add($method, new Route($path, $callable, $name));
+        }
     }
 
     /**
-     * Register a route as put method
+     * Adds a get to the routes collection
      */
-    public function put(string $path, Closure|array|string $action, ?string $name = null): void
+    public function get(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['put'], new Route($path, $action, $name));
+        $this->add('get', $path, $callable, $name);
     }
 
     /**
-     * Register a route as delete method
+     * Adds a post to the routes collection
      */
-    public function delete(string $path, Closure|array|string $action, ?string $name = null): void
+    public function post(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['delete'], new Route($path, $action, $name));
+        $this->add('post', $path, $callable, $name);
     }
 
     /**
-     * Register a route for all method
+     * Adds a put to the routes collection
      */
-    public function any(string $path, Closure|array|string $action, ?string $name = null): void
+    public function put(string $path, Closure | array $callable, ?string $name = null): void
     {
-        $this->routeCollection->add(['get', 'post', 'put', 'delete'], new Route($path, $action, $name));
+        $this->add('put', $path, $callable, $name);
     }
 
     /**
-     * Match all routes and find a route that matches the given method and url
+     * Adds a delete to the routes collection
+     */
+    public function delete(string $path, Closure | array $callable, ?string $name = null): void
+    {
+        $this->add('delete', $path, $callable, $name);
+    }
+
+    /**
+     * Adds a route to the routes collection that support all methods (get, post, put, delete)
+     */
+    public function any(string $path, Closure | array $callable, ?string $name = null): void
+    {
+        $this->add('get|post|put|delete', $path, $callable, $name);
+    }
+
+    /**
+     * Generate route uri for the given route name
+     *
+     * @param string $name
+     * @param array $parameters
+     * @return string the generated uri
+     */
+    public function generateUri(string $name, array $parameters = []): string
+    {
+        $route = $this->routeCollection->get($name);
+        return $route->generateUri($parameters);
+    }
+
+    /**
+     * Runs the router
      *
      * @param string $method
      * @param string $url
-     * @return Route|null
+     * @return Route
+     * @throws RouteNotFoundException
      */
-    public function match(string $method, string $url): ?Route
+    public function run(string $method, string $url): Route
     {
-        return $this->routeCollection->findRouteThatMatches($method, $url);
-    }
-
-    /**
-     * Generate url for a route with the given name
-     *
-     * @param string $name the name of the route
-     * @param array $parameters
-     * @return string|null
-     */
-    public function generate(string $name, array $parameters = []): ?string
-    {
-        return $this->routeCollection->generateUrlForRouteNamed($name, $parameters);
+        $routes = $this->routeCollection->getRoutes($method);
+        foreach ($routes as $route) {
+            if ($route->match($url)) {
+                return $route;
+            }
+        }
+        throw new RouteNotFoundException();
     }
 }
