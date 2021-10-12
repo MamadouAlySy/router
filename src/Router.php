@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MamadouAlySy;
 
 use Closure;
+use MamadouAlySy\Exceptions\RouteNotFoundException;
 
 class Router
 {
@@ -23,9 +24,9 @@ class Router
         return $this->routeCollection;
     }
 
-    /** 
+    /**
      * Adds new route to the routes collection
-     * 
+     *
      * @param string $methods
      * @param string $path
      * @param Closure|array $callable
@@ -89,5 +90,24 @@ class Router
     {
         $route = $this->routeCollection->get($name);
         return $route->generateUri($parameters);
+    }
+
+    /**
+     * Runs the router
+     *
+     * @param string $method
+     * @param string $url
+     * @return Route
+     * @throws RouteNotFoundException
+     */
+    public function run(string $method, string $url): Route
+    {
+        $routes = $this->routeCollection->getRoutes($method);
+        foreach ($routes as $route) {
+            if ($route->match($url)) {
+                return $route;
+            }
+        }
+        throw new RouteNotFoundException();
     }
 }

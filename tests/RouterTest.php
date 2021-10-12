@@ -1,5 +1,8 @@
 <?php
 
+namespace MamadouAlySy\Tests;
+
+use MamadouAlySy\Exceptions\RouteNotFoundException;
 use MamadouAlySy\Route;
 use MamadouAlySy\RouteCollection;
 use MamadouAlySy\Router;
@@ -33,5 +36,23 @@ class RouterTest extends TestCase
             expected: '/user/5',
             actual: $this->router->generateUri('user.show', ['id' => 5])
         );
+    }
+
+    public function testCanRunTheRouter()
+    {
+        $this->router->get('/', function () {
+            return 'hello';
+        });
+
+        $this->assertInstanceOf(
+            expected: Route::class,
+            actual: $this->router->run('get', '/')
+        );
+    }
+
+    public function willThowsExceptionIfNoRouteFound()
+    {
+        $this->expectException(RouteNotFoundException::class);
+        $this->router->run('get', '/');
     }
 }

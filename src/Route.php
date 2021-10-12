@@ -158,7 +158,9 @@ class Route
                 if (is_callable([$controllerObject, $actionName])) {
                     return call_user_func_array([$controllerObject, $actionName], $this->getParameters());
                 }
-                throw new RouteCallException("Unable to call \"$controllerName::$actionName\" make sure that it exists an it's callable.");
+                throw new RouteCallException(
+                    "Unable to call \"$controllerName::$actionName\" make sure that it exists an it's callable."
+                );
             }
             throw new RouteCallException("class \"$controllerName\" doest not exists.");
         }

@@ -2,9 +2,9 @@
 
 A simple php router
 
-# Requirements
+## Requirements
 
--   PHP version: `>=8.0`
+- PHP version: `>=8.0`
 
 ### Initialization
 
@@ -13,21 +13,9 @@ A simple php router
 
 require_once './vendor/autoload.php';
 
-$router = new \MamadouAlySy\Router();
-
-// or
-
-$routeCollection = new \MamadouAlySy\RouteCollectionFactory(
-    [
-       'home' => [
-           'path' => '/',
-           'action' => 'HomeController::index',
-           'methods' => ['GET']
-       ]
-    ];
+$router = new \MamadouAlySy\Router(
+    new \MamadouAlySy\RouteCollection()
 );
-
-$router = new \MamadouAlySy\Router($routeCollection);
 
 ```
 
@@ -40,16 +28,6 @@ $router->post('/', function () {/**/});
 $router->put('/', function () {/**/});
 $router->delete('/', function () {/**/});
 $router->any('/', function () {/**/});
-
-```
-
-### Generating route url
-
-```php
-
-$router->get('/edit/{int:id}', function () {/**/}, 'app.edit');
-
-$router->generate('app.edit', [id => 2]); // => returns /edit/2
 
 ```
 
@@ -69,8 +47,17 @@ $route->getParameters(); // => returns the route matched parameters
 
 ```php
 
-'{int:id}'         => 'id => ([0-9]+)'
-'{string:name}'    => 'name => ([a-zA-Z]+)'
-'{*:name}'         => 'name => (.+)'
+$router->get('/user/:id', function () {/**/})->with('id', '[0-9]+');
+$router->get('/:action/:name', function () {/**/});
+
+```
+
+### Generating route url
+
+```php
+
+$router->get('/edit/:id', function () {/**/}, 'app.edit');
+
+$router->generateUri('app.edit', [id => 2]); // => returns /edit/2
 
 ```
