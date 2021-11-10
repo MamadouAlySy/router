@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare ( strict_types = 1 );
 
 namespace MamadouAlySy;
 
@@ -9,15 +9,15 @@ use MamadouAlySy\Exceptions\RouteCallException;
 
 class Route
 {
-    protected ?string $name;
+    protected  ? string $name;
     protected string $path;
     protected Closure | array $callable;
     protected array $parameters;
     protected array $withParameters;
 
-    public function __construct(string $path, Closure | array $callable, ?string $name = null)
+    public function __construct( string $path, Closure | array $callable, ?string $name = null )
     {
-        $this->path = trim($path, '/');
+        $this->path = trim( $path, '/' );
         $this->callable = $callable;
         $this->name = $name;
         $this->parameters = [];
@@ -26,7 +26,7 @@ class Route
     /**
      * @return string the route path
      */
-    public function getPath(): string
+    public function getPath() : string
     {
         return $this->path;
     }
@@ -34,7 +34,7 @@ class Route
     /**
      * @param string $path the new path
      */
-    public function setPath(string $path): void
+    public function setPath( string $path ): void
     {
         $this->path = $path;
     }
@@ -50,7 +50,7 @@ class Route
     /**
      * @param string $callable the new route callable
      */
-    public function setCallable(Closure | array $callable): void
+    public function setCallable( Closure | array $callable ): void
     {
         $this->callable = $callable;
     }
@@ -66,7 +66,7 @@ class Route
     /**
      * @param string $name the new name
      */
-    public function setName(?string $name): void
+    public function setName( ?string $name ): void
     {
         $this->name = $name;
     }
@@ -79,10 +79,10 @@ class Route
         return $this->parameters;
     }
 
-     /**
+    /**
      * @param array the route new parameters
      */
-    protected function setParameters(array $parameters): void
+    protected function setParameters( array $parameters ): void
     {
         $this->parameters = $parameters;
     }
@@ -94,9 +94,9 @@ class Route
      * @param string $regex regular expression for the uri key
      * @return self
      */
-    public function with(string $key, string $regex): self
+    public function with( string $key, string $regex ): self
     {
-        $this->withParameters[$key] = str_replace('(', '(?:', $regex);
+        $this->withParameters[$key] = str_replace( '(', '(?:', $regex );
         return $this;
     }
 
@@ -106,15 +106,16 @@ class Route
      * @param string $url
      * @return boolean
      */
-    public function match(string $url): bool
-    {
-        $url = trim($url, '/');
-        $regex = preg_replace_callback("#:(\w+)#", [$this, 'getRegexPattern'], $this->getPath());
-        if (preg_match("#^$regex$#", $url, $matches)) {
-            array_shift($matches);
-            $this->setParameters($matches);
+    public function match( string $url ): bool {
+        $url = trim( $url, '/' );
+        $regex = preg_replace_callback( "#:(\w+)#", [$this, 'getRegexPattern'], $this->getPath() );
+
+        if ( preg_match( "#^$regex$#", $url, $matches ) ) {
+            array_shift( $matches );
+            $this->setParameters( $matches );
             return true;
         }
+
         return false;
     }
 
@@ -122,11 +123,13 @@ class Route
      * @param array $matches found Parameters
      * @return string the regex pattern
      */
-    protected function getRegexPattern(array $matches): string
+    protected function getRegexPattern( array $matches ): string
     {
-        if (isset($this->withParameters[$matches[1]])) {
+
+        if ( isset( $this->withParameters[$matches[1]] ) ) {
             return '(' . $this->withParameters[$matches[1]] . ')';
         }
+
         return "([^/]+)";
     }
 
@@ -134,13 +137,15 @@ class Route
      * @param array $parameters
      * @return string the route uri
      */
-    public function generateUri(array $parameters = []): string
+    public function generateUri( array $parameters = [] ): string
     {
         $path = $this->getPath();
-        foreach ($parameters as $key => $value) {
-            $path = str_replace(":$key", strval($value), $path);
+
+        foreach ( $parameters as $key => $value ) {
+            $path = str_replace( ":$key", strval( $value ), $path );
         }
-        return '/' . trim($path, '/');
+
+        return '/' . trim( $path, '/' );
     }
 
     /**
@@ -151,19 +156,26 @@ class Route
     public function call(): mixed
     {
         $callable = $this->getCallable();
-        if (is_array($callable) && count($callable) === 2) {
-            list($controllerName, $actionName) = $callable;
-            if (class_exists($controllerName)) {
+
+        if ( is_array( $callable ) && count( $callable ) === 2 ) {
+            list( $controllerName, $actionName ) = $callable;
+
+            if ( class_exists( $controllerName ) ) {
                 $controllerObject = new $controllerName();
-                if (is_callable([$controllerObject, $actionName])) {
-                    return call_user_func_array([$controllerObject, $actionName], $this->getParameters());
+
+                if ( is_callable( [$controllerObject, $actionName] ) ) {
+                    return call_user_func_array( [$controllerObject, $actionName], $this->getParameters() );
                 }
+
                 throw new RouteCallException(
                     "Unable to call \"$controllerName::$actionName\" make sure that it exists an it's callable."
                 );
             }
-            throw new RouteCallException("class \"$controllerName\" doest not exists.");
+
+            throw new RouteCallException( "class \"$controllerName\" doest not exists." );
         }
-        return call_user_func_array($callable, $this->getParameters());
+
+        return call_user_func_array( $callable, $this->getParameters() );
     }
+
 }

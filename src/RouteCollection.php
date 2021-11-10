@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare ( strict_types = 1 );
 
 namespace MamadouAlySy;
 
@@ -11,7 +11,7 @@ class RouteCollection
     protected array $routes;
     protected array $namedRoutes;
 
-    public function __construct(array $routes = [])
+    public function __construct( array $routes = [] )
     {
         $this->routes = $routes;
     }
@@ -19,11 +19,12 @@ class RouteCollection
     /**
      * Adds new route to the collection
      */
-    public function add(string $method, Route $route): Route
+    public function add( string $method, Route $route ): Route
     {
-        $method = strtolower($method);
+        $method = strtolower( $method );
         $this->routes[$method][] = $route;
-        if ($route->getName() !== null) {
+
+        if ( $route->getName() !== null ) {
             $this->namedRoutes[$route->getName()] = $route;
         }
 
@@ -37,22 +38,27 @@ class RouteCollection
      * @param string|null $method
      * @return array
      */
-    public function getRoutes(?string $method = null): array
+    public function getRoutes( ?string $method = null ): array
     {
-        if ($method) {
+
+        if ( $method ) {
             return $this->routes[$method];
         }
+
         return $this->routes;
     }
 
     /**
      * Returns a route with the given name
      */
-    public function get(string $name): Route
+    public function get( string $name ): Route
     {
-        if (isset($this->namedRoutes[$name])) {
+
+        if ( isset( $this->namedRoutes[$name] ) ) {
             return $this->namedRoutes[$name];
         }
-        throw new RouteNotFoundException("No route found with the name \"$name\"");
+
+        throw new RouteNotFoundException( "No route found with the name \"$name\"" );
     }
+
 }

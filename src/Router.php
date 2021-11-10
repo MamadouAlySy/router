@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare ( strict_types = 1 );
 
 namespace MamadouAlySy;
 
@@ -11,7 +11,7 @@ class Router
 {
     protected RouteCollection $routeCollection;
 
-    public function __construct(?RouteCollection $routeCollection = null)
+    public function __construct( ?RouteCollection $routeCollection = null )
     {
         $this->routeCollection = $routeCollection ?? new RouteCollection();
     }
@@ -32,51 +32,53 @@ class Router
      * @param Closure|array $callable
      * @param string|null $name
      */
-    protected function add(string $methods, string $path, Closure | array $callable, ?string $name = null): void
+    protected function add( string $methods, string $path, Closure | array $callable, ?string $name = null ): void
     {
-        foreach (explode('|', $methods) as $method) {
-            $this->routeCollection->add($method, new Route($path, $callable, $name));
+
+        foreach ( explode( '|', $methods ) as $method ) {
+            $this->routeCollection->add( $method, new Route( $path, $callable, $name ) );
         }
+
     }
 
     /**
      * Adds a get to the routes collection
      */
-    public function get(string $path, Closure | array $callable, ?string $name = null): void
+    public function get( string $path, Closure | array $callable, ?string $name = null ): void
     {
-        $this->add('get', $path, $callable, $name);
+        $this->add( 'get', $path, $callable, $name );
     }
 
     /**
      * Adds a post to the routes collection
      */
-    public function post(string $path, Closure | array $callable, ?string $name = null): void
+    public function post( string $path, Closure | array $callable, ?string $name = null ): void
     {
-        $this->add('post', $path, $callable, $name);
+        $this->add( 'post', $path, $callable, $name );
     }
 
     /**
      * Adds a put to the routes collection
      */
-    public function put(string $path, Closure | array $callable, ?string $name = null): void
+    public function put( string $path, Closure | array $callable, ?string $name = null ): void
     {
-        $this->add('put', $path, $callable, $name);
+        $this->add( 'put', $path, $callable, $name );
     }
 
     /**
      * Adds a delete to the routes collection
      */
-    public function delete(string $path, Closure | array $callable, ?string $name = null): void
+    public function delete( string $path, Closure | array $callable, ?string $name = null ): void
     {
-        $this->add('delete', $path, $callable, $name);
+        $this->add( 'delete', $path, $callable, $name );
     }
 
     /**
      * Adds a route to the routes collection that support all methods (get, post, put, delete)
      */
-    public function any(string $path, Closure | array $callable, ?string $name = null): void
+    public function any( string $path, Closure | array $callable, ?string $name = null ): void
     {
-        $this->add('get|post|put|delete', $path, $callable, $name);
+        $this->add( 'get|post|put|delete', $path, $callable, $name );
     }
 
     /**
@@ -86,10 +88,10 @@ class Router
      * @param array $parameters
      * @return string the generated uri
      */
-    public function generateUri(string $name, array $parameters = []): string
+    public function generateUri( string $name, array $parameters = [] ): string
     {
-        $route = $this->routeCollection->get($name);
-        return $route->generateUri($parameters);
+        $route = $this->routeCollection->get( $name );
+        return $route->generateUri( $parameters );
     }
 
     /**
@@ -100,14 +102,19 @@ class Router
      * @return Route
      * @throws RouteNotFoundException
      */
-    public function run(string $method, string $url): Route
+    public function run( string $method, string $url ): Route
     {
-        $routes = $this->routeCollection->getRoutes($method);
-        foreach ($routes as $route) {
-            if ($route->match($url)) {
+        $routes = $this->routeCollection->getRoutes( $method );
+
+        foreach ( $routes as $route ) {
+
+            if ( $route->match( $url ) ) {
                 return $route;
             }
+
         }
+
         throw new RouteNotFoundException();
     }
+
 }
