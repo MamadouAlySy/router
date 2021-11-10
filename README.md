@@ -38,7 +38,7 @@ $router->any('/', function () {/**/});
 $route = $router->match('GET', '/'); // => returns a route if match or null if not match
 
 $route->getName(); // => returns the route name
-$route->getAction(); // => returns the route action
+$route->getCallable(); // => returns the route action
 $route->getParameters(); // => returns the route matched parameters
 
 ```
