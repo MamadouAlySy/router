@@ -1,27 +1,25 @@
 <?php
 
-declare ( strict_types = 1 );
+declare (strict_types = 1);
 
 namespace MamadouAlySy;
 
 use Closure;
 use MamadouAlySy\Exceptions\RouteCallException;
 
+/**
+ * @author Mamadou Aly Sy <sy.aly.mamadou@gmail.com>
+ */
 class Route
 {
-    protected  ? string $name;
-    protected string $path;
-    protected Closure | array $callable;
-    protected array $parameters;
-    protected array $withParameters;
+    private array $withParameters = [];
 
-    public function __construct( string $path, Closure | array $callable, ?string $name = null )
-    {
-        $this->path = trim( $path, '/' );
-        $this->callable = $callable;
-        $this->name = $name;
-        $this->parameters = [];
-    }
+    public function __construct(
+        private string $path,
+        private mixed $callable, 
+        private ?string $name = null,
+        private array $parameters = [])
+    {}
 
     /**
      * @return string the route path
@@ -120,6 +118,8 @@ class Route
     }
 
     /**
+     * Generate the correct regex expression
+     * 
      * @param array $matches found Parameters
      * @return string the regex pattern
      */
@@ -137,45 +137,15 @@ class Route
      * @param array $parameters
      * @return string the route uri
      */
-    public function generateUri( array $parameters = [] ): string
+    public function generateUri(array $parameters = []): string
     {
         $path = $this->getPath();
 
-        foreach ( $parameters as $key => $value ) {
+        foreach ($parameters as $key => $value) {
             $path = str_replace( ":$key", strval( $value ), $path );
         }
 
         return '/' . trim( $path, '/' );
-    }
-
-    /**
-     * Call the route callable
-     *
-     * @return mixed the route callable response
-     */
-    public function call(): mixed
-    {
-        $callable = $this->getCallable();
-
-        if ( is_array( $callable ) && count( $callable ) === 2 ) {
-            list( $controllerName, $actionName ) = $callable;
-
-            if ( class_exists( $controllerName ) ) {
-                $controllerObject = new $controllerName();
-
-                if ( is_callable( [$controllerObject, $actionName] ) ) {
-                    return call_user_func_array( [$controllerObject, $actionName], $this->getParameters() );
-                }
-
-                throw new RouteCallException(
-                    "Unable to call \"$controllerName::$actionName\" make sure that it exists an it's callable."
-                );
-            }
-
-            throw new RouteCallException( "class \"$controllerName\" doest not exists." );
-        }
-
-        return call_user_func_array( $callable, $this->getParameters() );
     }
 
 }
