@@ -35,7 +35,7 @@ $router->any('/', function () {/**/});
 
 ```php
 
-$route = $router->match('GET', '/'); // => returns a route if match or null if not match
+$route = $router->dispatch('GET', '/'); // => returns a route if match or null if not match
 
 $route->getName(); // => returns the route name
 $route->getCallable(); // => returns the route action
